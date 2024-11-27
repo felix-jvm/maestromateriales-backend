@@ -41,6 +41,10 @@ class ProductoView(viewsets.ViewSet):
    procedRecord = list(M.Producto.objects.filter(Codigo=productCodigo))
    if procedRecord:return HttpResponse(procedRecord[0].FichaTecnica,content_type='image/png')
    return Response([]) 
+  if req.data['mode'] == 'delete':
+   recordToDeleteCode = req.data['code'].replace(' ','').strip()
+   record = M.Producto.objects.filter(Codigo=recordToDeleteCode)
+   if record:record[0].delete()
 
   return Response({'msg':'ok'})
  
@@ -95,7 +99,17 @@ class CategoriaView(viewsets.ViewSet):
    payload = req.data['payload']
    payload = {'Descripcion':payload}
    M.Categoria.objects.create(**payload)
-   return Response({'msg':'ok'})
+  elif req.data['mode'] == 'fillForm':  
+   specificRecord = M.Categoria.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
+   if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
+  elif req.data['mode'] == 'update':
+   M.Categoria.objects.filter(Descripcion=req.data['recordCode'].replace('updt_','').strip()).update(**{'Descripcion':req.data['payload']})
+  if req.data['mode'] == 'delete':
+   recordToDeleteCode = req.data['code'].replace(' ','').strip()
+   record = M.Categoria.objects.filter(Descripcion=recordToDeleteCode)
+   if record:record[0].delete() 
+
+  return Response({'msg':'ok'}) 
  
  def delete(self,req):
   return Response({})
@@ -108,7 +122,6 @@ class CategoriaView(viewsets.ViewSet):
   recordList = M.Categoria.objects.all().values('Descripcion')
   for record in recordList:data['records'].append(list(record.values()))
 
-  print('----------->',data)
   return Response(data)
 
 
@@ -119,7 +132,17 @@ class UnidadMedidaView(viewsets.ViewSet):
    payload = req.data['payload']
    payload = {'Descripcion':payload}
    M.UnidadMedida.objects.create(**payload)
-   return Response({'msg':'ok'})
+  elif req.data['mode'] == 'fillForm':  
+   specificRecord = M.UnidadMedida.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
+   if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
+  elif req.data['mode'] == 'update':
+   M.UnidadMedida.objects.filter(Descripcion=req.data['recordCode'].replace('updt_','').strip()).update(**{'Descripcion':req.data['payload']})
+  if req.data['mode'] == 'delete':
+   recordToDeleteCode = req.data['code'].replace(' ','').strip()
+   record = M.UnidadMedida.objects.filter(Descripcion=recordToDeleteCode)
+   if record:record[0].delete()  
+
+  return Response({'msg':'ok'})
  
  def delete(self,req):
   return Response({})
@@ -132,7 +155,6 @@ class UnidadMedidaView(viewsets.ViewSet):
   recordList = M.UnidadMedida.objects.all().values('Descripcion')
   for record in recordList:data['records'].append(list(record.values()))
 
-  print('----------->',data)
   return Response(data)
 
 
@@ -143,7 +165,17 @@ class EstadoMaterialView(viewsets.ViewSet):
    payload = req.data['payload']
    payload = {'Descripcion':payload}
    M.EstadoMaterial.objects.create(**payload)
-   return Response({'msg':'ok'})
+  elif req.data['mode'] == 'fillForm':  
+   specificRecord = M.EstadoMaterial.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
+   if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
+  elif req.data['mode'] == 'update':
+   M.EstadoMaterial.objects.filter(Descripcion=req.data['recordCode'].replace('updt_','').strip()).update(**{'Descripcion':req.data['payload']})
+  if req.data['mode'] == 'delete':
+   recordToDeleteCode = req.data['code'].replace(' ','').strip()
+   record = M.EstadoMaterial.objects.filter(Descripcion=recordToDeleteCode)
+   if record:record[0].delete()  
+
+  return Response({'msg':'ok'})
  
  def delete(self,req):
   return Response({})
@@ -166,7 +198,17 @@ class ProveedorView(viewsets.ViewSet):
    payload = req.data['payload']
    payload = {'Descripcion':payload}
    M.Proveedor.objects.create(**payload)
-   return Response({'msg':'ok'})
+  elif req.data['mode'] == 'fillForm':  
+   specificRecord = M.Proveedor.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
+   if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
+  elif req.data['mode'] == 'update':
+   M.Proveedor.objects.filter(Descripcion=req.data['recordCode'].replace('updt_','').strip()).update(**{'Descripcion':req.data['payload']})
+  if req.data['mode'] == 'delete':
+   recordToDeleteCode = req.data['code'].replace(' ','').strip()
+   record = M.Proveedor.objects.filter(Descripcion=recordToDeleteCode)
+   if record:record[0].delete()  
+
+  return Response({'msg':'ok'})
  
  def delete(self,req):
   return Response({})
@@ -179,7 +221,6 @@ class ProveedorView(viewsets.ViewSet):
   recordList = M.Proveedor.objects.all().values('Descripcion')
   for record in recordList:data['records'].append(list(record.values()))
 
-  print('----------->',data)
   return Response(data)
 
 router = DefaultRouter()
