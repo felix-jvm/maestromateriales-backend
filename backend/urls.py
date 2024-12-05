@@ -25,11 +25,26 @@ class ProductoView(viewsets.ViewSet):
    return Response(selectRecords)
   if req.data['mode'] == 'create':
    if 'updt_producto_codigo' in req.data['payload']:
-     recordToUpdt = M.Producto.objects.filter(Codigo=req.data['payload']['updt_producto_codigo'])
-     for propToUpdt in req.data['payload'].keys():
-      if propToUpdt == 'updt_producto_codigo':continue
-      if recordToUpdt:M.Producto.objects.filter(Codigo=req.data['payload']['updt_producto_codigo']).update(**{propToUpdt:req.data['payload'][propToUpdt]})
-   elif 'Codigo' in req.data['payload']:M.Producto.objects.create(**req.data['payload'])
+    if 'codeChanged' in req.data['payload'].keys() and req.data['payload']['codeChanged']:
+     codeToLook = req.data['payload']['Codigo']
+     foundRecord = list(M.Producto.objects.filter(Codigo=codeToLook))
+     if foundRecord:return Response({'msg':'El código %s esta siendo usado por el producto: %s'%(codeToLook,foundRecord[0].Descripcion)})
+
+    recordToUpdt = M.Producto.objects.filter(Codigo=req.data['payload']['updt_producto_codigo'])
+    dictRepr = {}
+    for propToUpdt in req.data['payload'].keys():
+     if propToUpdt in ['updt_producto_codigo','codeChanged']:continue
+     print('-------------->',propToUpdt)
+     dictRepr[propToUpdt]=req.data['payload'][propToUpdt]
+    #  recordToUpdt.update(**{propToUpdt:req.data['payload'][propToUpdt]})
+    #  if recordToUpdt:M.Producto.objects.filter(Codigo=req.data['payload']['updt_producto_codigo']).update(**{propToUpdt:req.data['payload'][propToUpdt]})
+    if recordToUpdt:recordToUpdt.update(**dictRepr)
+   elif 'Codigo' in req.data['payload']:
+    codeToLook = req.data['payload']['Codigo'] 
+    foundRecord = list(M.Producto.objects.filter(Codigo=codeToLook))
+    if foundRecord:return Response({'msg':'El código %s esta siendo usado por el producto: %s'%(codeToLook,foundRecord[0].Descripcion)})    
+
+    M.Producto.objects.create(**req.data['payload'])
   if req.data['mode'] == 'save_ficha_tecnica':
    productCodigo = req.data['productCode']
    recordToUpdate = list(M.Producto.objects.filter(Codigo=productCodigo))
