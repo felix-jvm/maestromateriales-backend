@@ -113,7 +113,8 @@ class CategoriaView(viewsets.ViewSet):
   if req.data['mode'] == 'create':
    payload = req.data['payload']
    payload = {'Descripcion':payload}
-   M.Categoria.objects.create(**payload)
+   createdObj = M.Categoria.objects.create(**payload)
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
   elif req.data['mode'] == 'fillForm':  
    specificRecord = M.Categoria.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
    if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
@@ -146,7 +147,8 @@ class UnidadMedidaView(viewsets.ViewSet):
   if req.data['mode'] == 'create':
    payload = req.data['payload']
    payload = {'Descripcion':payload}
-   M.UnidadMedida.objects.create(**payload)
+   createdObj = M.UnidadMedida.objects.create(**payload)
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
   elif req.data['mode'] == 'fillForm':  
    specificRecord = M.UnidadMedida.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
    if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
@@ -179,7 +181,8 @@ class EstadoMaterialView(viewsets.ViewSet):
   if req.data['mode'] == 'create':
    payload = req.data['payload']
    payload = {'Descripcion':payload}
-   M.EstadoMaterial.objects.create(**payload)
+   createdObj = M.EstadoMaterial.objects.create(**payload)
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
   elif req.data['mode'] == 'fillForm':  
    specificRecord = M.EstadoMaterial.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
    if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
@@ -212,7 +215,8 @@ class ProveedorView(viewsets.ViewSet):
   if req.data['mode'] == 'create':
    payload = req.data['payload']
    payload = {'Descripcion':payload}
-   M.Proveedor.objects.create(**payload)
+   createdObj = M.Proveedor.objects.create(**payload)
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
   elif req.data['mode'] == 'fillForm':  
    specificRecord = M.Proveedor.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
    if specificRecord:return Response(specificRecord.values('ID','Descripcion'))
