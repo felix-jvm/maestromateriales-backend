@@ -31,6 +31,7 @@ class UsuarioCodigo(models.Model):
 class Producto(models.Model):
     ID = models.AutoField(primary_key=True)
     Codigo = models.CharField(db_column='Codigo', max_length=100, blank=False, null=False)
+    Codigo_repr = models.CharField(db_column='Codigo_repr', max_length=100, blank=True, null=True)    
     Descripcion = models.CharField(db_column='Descripcion', max_length=500, blank=True, null=True)
     UnidadMedida = models.IntegerField(db_column='UnidadMedida', blank=True, null=True)
     Categoria = models.IntegerField(db_column='Categoria', blank=True, null=True)
@@ -46,6 +47,7 @@ class Producto(models.Model):
     TiempoProcesoInterno = models.IntegerField(db_column='TiempoProcesoInterno', blank=True, null=True)
     TiempoVidaUtil = models.IntegerField(db_column='TiempoVidaUtil', blank=True, null=True)
     FichaTecnica = models.BinaryField(db_column='FichaTecnica', blank=True, null=True)
+    Clase = models.IntegerField(db_column='Clase', blank=True, null=True)
 
     class Meta:
         managed = True
@@ -83,3 +85,31 @@ class Proveedor(models.Model):
         managed = True
         db_table = 'Proveedor'    
 
+class Familia(models.Model):
+    ID = models.AutoField(primary_key=True)
+    Codigo = models.IntegerField(db_column='Codigo', blank=True, null=True)
+    Descripcion = models.CharField(db_column='Descripcion', max_length=100, blank=True, null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'Familia'    
+
+class Segmento(models.Model):
+    ID = models.AutoField(primary_key=True)
+    Codigo = models.IntegerField(db_column='Codigo', blank=True, null=True)
+    Descripcion = models.CharField(db_column='Descripcion', max_length=100, blank=True, null=True)
+    Familia = models.IntegerField(db_column='Familia', blank=True, null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'Segmento'        
+
+class Clase(models.Model):
+    ID = models.AutoField(primary_key=True)
+    Codigo = models.IntegerField(db_column='Codigo', blank=True, null=True)
+    Descripcion = models.CharField(db_column='Descripcion', max_length=100, blank=True, null=True)
+    Segmento = models.IntegerField(db_column='Segmento', blank=True, null=True)    
+
+    class Meta:
+        managed = True
+        db_table = 'Clase'         
