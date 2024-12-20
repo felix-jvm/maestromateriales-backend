@@ -71,6 +71,13 @@ class ProductoView(viewsets.ViewSet):
       newSeq = str(seqToSearch) + '01'
      return Response({'seq':newSeq})
    return Response([])
+  if req.data['mode'] == 'reqCodeAllSeqData':  
+   seqToSearch = M.Clase.objects.filter(pk=req.data['payload']).values('Codigo')
+   if seqToSearch: 
+    seqToSearch = seqToSearch[0]['Codigo']
+    productRecords = M.Producto.objects.filter(Codigo__contains=seqToSearch).values('ID','Descripcion')
+    print('------------>',productRecords)
+   return Response(productRecords)   
 
   if req.data['mode'] == 'delete':
    recordToDeleteCode = req.data['code'].replace(' ','').strip()
@@ -267,8 +274,44 @@ class FamiliaView(viewsets.ViewSet):
   records = M.Familia.objects.values('ID','Descripcion')
   return Response(records)
 
+ def create(self,req):
+  if req.data['mode'] == 'reqCodeAllSeqData':  
+   data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
+   familiaCodigo = M.Familia.objects.filter(pk=req.data['payload']).values('Codigo')
+   if familiaCodigo:
+    familiaCodigo = familiaCodigo[0]['Codigo']
+    familiaSegmentos = M.Segmento.objects.filter(Familia=familiaCodigo).values('Codigo')
+    for segmentoCode in familiaSegmentos:
+     segmentoCode = segmentoCode['Codigo']
+     clasesCodigo = M.Clase.objects.filter(Segmento=segmentoCode).values('Codigo')
+     for seqToLook in clasesCodigo:
+      claseRecords = M.Producto.objects.filter(Codigo__contains=seqToLook['Codigo']).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
+     
+      for record in claseRecords.values():
+        parsedRecord = {**record}
+        del parsedRecord['ID']
+        del parsedRecord['FichaTecnica']
+        del parsedRecord['Codigo_repr']
+        del parsedRecord['Clase']
+        unidadMedida = M.UnidadMedida.objects.filter(pk=parsedRecord['UnidadMedida']).values('Descripcion')
+        categoria = M.Categoria.objects.filter(pk=parsedRecord['Categoria']).values('Descripcion')
+        estadoMaterial = M.EstadoMaterial.objects.filter(pk=parsedRecord['EstadoMaterial']).values('Descripcion')
+        proveedor = M.Proveedor.objects.filter(pk=parsedRecord['Proveedor']).values('Descripcion')
+
+        parsedRecord['UnidadMedida'] = unidadMedida[0]['Descripcion'] if unidadMedida else ''
+        parsedRecord['Categoria'] = categoria[0]['Descripcion'] if categoria else ''
+        parsedRecord['EstadoMaterial'] = estadoMaterial[0]['Descripcion'] if estadoMaterial else ''
+        parsedRecord['Proveedor'] = proveedor[0]['Descripcion'] if proveedor else ''
+        data['records'].append(list(parsedRecord.values()))
+   return Response(data) 
+  return Response([])
 class SegmentoView(viewsets.ViewSet):
  
+ def list(self,req):
+  # to get all records without filter
+  records = M.Segmento.objects.all().values('ID','Descripcion')
+  return Response(records)   
+
  def create(self,req):
   if req.data['mode'] == 'listFilteredRecords':
    if req.data['payload']:
@@ -277,13 +320,41 @@ class SegmentoView(viewsets.ViewSet):
      familiaRecord = familiaRecord[0]
      segmentoRecords = M.Segmento.objects.filter(Familia=familiaRecord['Codigo']).values('ID','Descripcion')
      return Response(segmentoRecords)
+  if req.data['mode'] == 'reqCodeAllSeqData':  
+   data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
+   segmentoCode = M.Segmento.objects.filter(pk=req.data['payload']).values('Codigo')
+   if segmentoCode:
+    segmentoCode = segmentoCode[0]['Codigo']
+    clasesCodigo = M.Clase.objects.filter(Segmento=segmentoCode).values('Codigo')
+    for seqToLook in clasesCodigo:
+     claseRecords = M.Producto.objects.filter(Codigo__contains=seqToLook['Codigo']).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
+     
+     for record in claseRecords.values():
+        parsedRecord = {**record}
+        del parsedRecord['ID']
+        del parsedRecord['FichaTecnica']
+        del parsedRecord['Codigo_repr']
+        del parsedRecord['Clase']
+        unidadMedida = M.UnidadMedida.objects.filter(pk=parsedRecord['UnidadMedida']).values('Descripcion')
+        categoria = M.Categoria.objects.filter(pk=parsedRecord['Categoria']).values('Descripcion')
+        estadoMaterial = M.EstadoMaterial.objects.filter(pk=parsedRecord['EstadoMaterial']).values('Descripcion')
+        proveedor = M.Proveedor.objects.filter(pk=parsedRecord['Proveedor']).values('Descripcion')
+
+        parsedRecord['UnidadMedida'] = unidadMedida[0]['Descripcion'] if unidadMedida else ''
+        parsedRecord['Categoria'] = categoria[0]['Descripcion'] if categoria else ''
+        parsedRecord['EstadoMaterial'] = estadoMaterial[0]['Descripcion'] if estadoMaterial else ''
+        parsedRecord['Proveedor'] = proveedor[0]['Descripcion'] if proveedor else ''
+        data['records'].append(list(parsedRecord.values()))
+   return Response(data)
   return Response({})
   
 class ClaseView(viewsets.ViewSet):
  
  def list(self,req):
-  pass
- 
+  # to get all records without filter
+  records = M.Clase.objects.all().values('ID','Descripcion')
+  return Response(records) 
+
  def create(self,req):
   if req.data['mode'] == 'listFilteredRecords':
    if req.data['payload']:
@@ -291,9 +362,34 @@ class ClaseView(viewsets.ViewSet):
     if segmentoRecord:
      segmentoRecord = segmentoRecord[0]
      claseRecords = M.Clase.objects.filter(Segmento=segmentoRecord['Codigo']).values('ID','Descripcion')
-     print('---------------->',claseRecords)
      return Response(claseRecords)
-  return Response([])  
+    
+  if req.data['mode'] == 'reqCodeAllSeqData':  
+   data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
+   clasesCodigo = M.Clase.objects.filter(pk=req.data['payload']).values('Codigo')
+   print('---------------->',clasesCodigo)
+   if clasesCodigo:
+     clasesCodigo = clasesCodigo[0]['Codigo']
+     claseRecords = M.Producto.objects.filter(Codigo__contains=clasesCodigo).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
+     
+     for record in claseRecords.values():
+        parsedRecord = {**record}
+        del parsedRecord['ID']
+        del parsedRecord['FichaTecnica']
+        del parsedRecord['Codigo_repr']
+        del parsedRecord['Clase']
+        unidadMedida = M.UnidadMedida.objects.filter(pk=parsedRecord['UnidadMedida']).values('Descripcion')
+        categoria = M.Categoria.objects.filter(pk=parsedRecord['Categoria']).values('Descripcion')
+        estadoMaterial = M.EstadoMaterial.objects.filter(pk=parsedRecord['EstadoMaterial']).values('Descripcion')
+        proveedor = M.Proveedor.objects.filter(pk=parsedRecord['Proveedor']).values('Descripcion')
+
+        parsedRecord['UnidadMedida'] = unidadMedida[0]['Descripcion'] if unidadMedida else ''
+        parsedRecord['Categoria'] = categoria[0]['Descripcion'] if categoria else ''
+        parsedRecord['EstadoMaterial'] = estadoMaterial[0]['Descripcion'] if estadoMaterial else ''
+        parsedRecord['Proveedor'] = proveedor[0]['Descripcion'] if proveedor else ''
+        data['records'].append(list(parsedRecord.values()))
+   return Response(data)
+  return Response({})  
 
 
 router = DefaultRouter()
