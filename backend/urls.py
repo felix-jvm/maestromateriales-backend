@@ -137,59 +137,6 @@ class CategoriaView(viewsets.ViewSet):
  def create(self,req):  
 
   if req.data['mode'] == 'create':
-   
-   M.Segmento.objects.create(**{'Codigo':'10', 'Descripcion':'Productos agrícolas, alimentos y bebidas'})
-   M.Segmento.objects.create(**{'Codigo':'11', 'Descripcion':'Productos textiles, prendas de vestir y accesorios'})
-   M.Segmento.objects.create(**{'Codigo':'12', 'Descripcion':'Productos y servicios químicos'})
-   M.Segmento.objects.create(**{'Codigo':'14', 'Descripcion':'Equipos de oficina, papelería y material escolar'})
-   M.Segmento.objects.create(**{'Codigo':'18', 'Descripcion':'Servicios profesionales'})
-
-
-   M.Familia.objects.create(**{'Codigo':'1001', 'Descripcion':'Frutas y verduras', 'Segmento':'10'})
-   M.Familia.objects.create(**{'Codigo':'1002', 'Descripcion':'Bebidas no alcohólicas', 'Segmento':'10'})
-
-   M.Familia.objects.create(**{'Codigo':'1101', 'Descripcion':'Ropa masculina', 'Segmento':'11'})
-   M.Familia.objects.create(**{'Codigo':'1102', 'Descripcion':'Accesorios de moda', 'Segmento':'11'})
-
-   M.Familia.objects.create(**{'Codigo':'1201', 'Descripcion':'Productos de limpieza', 'Segmento':'12'})
-   M.Familia.objects.create(**{'Codigo':'1202', 'Descripcion':'Productos farmacéuticos', 'Segmento':'12'})
-
-   M.Familia.objects.create(**{'Codigo':'1401', 'Descripcion':'Mobiliario de oficina', 'Segmento':'14'})
-   M.Familia.objects.create(**{'Codigo':'1402', 'Descripcion':'Material de oficina', 'Segmento':'14'})
-
-   M.Familia.objects.create(**{'Codigo':'1801', 'Descripcion':'Consultoría empresarial', 'Segmento':'18'})
-   M.Familia.objects.create(**{'Codigo':'1802', 'Descripcion':'Servicios legales', 'Segmento':'18'})
-
-
-   M.Clase.objects.create(**{'Codigo':'100101', 'Descripcion':'Frutas frescas', 'Familia':'1001'})
-   M.Clase.objects.create(**{'Codigo':'100102', 'Descripcion':'Verduras frescas', 'Familia':'1001'})
-
-   M.Clase.objects.create(**{'Codigo':'100201', 'Descripcion':'Jugos naturales', 'Familia':'1002'})
-   M.Clase.objects.create(**{'Codigo':'100202', 'Descripcion':'Agua embotellada', 'Familia':'1002'})
-
-   M.Clase.objects.create(**{'Codigo':'110101', 'Descripcion':'Camisas', 'Familia':'1101'})
-   M.Clase.objects.create(**{'Codigo':'110102', 'Descripcion':'Pantalones', 'Familia':'1101'})
-
-   M.Clase.objects.create(**{'Codigo':'110201', 'Descripcion':'Bolsos y carteras', 'Familia':'1102'})
-   M.Clase.objects.create(**{'Codigo':'110202', 'Descripcion':'Gafas de sol', 'Familia':'1102'})
-
-   M.Clase.objects.create(**{'Codigo':'120101', 'Descripcion':'Detergentes', 'Familia':'1201'})
-   M.Clase.objects.create(**{'Codigo':'120102', 'Descripcion':'Limpiadores multiusos', 'Familia':'1201'})
-
-   M.Clase.objects.create(**{'Codigo':'120201', 'Descripcion':'Medicamentos para el dolor', 'Familia':'1202'})
-   M.Clase.objects.create(**{'Codigo':'120202', 'Descripcion':'Vitaminas y suplementos', 'Familia':'1202'})
-
-   M.Clase.objects.create(**{'Codigo':'140101', 'Descripcion':'Escritorios', 'Familia':'1401'})
-   M.Clase.objects.create(**{'Codigo':'140102', 'Descripcion':'Sillas de oficina', 'Familia':'1401'})
-
-   M.Clase.objects.create(**{'Codigo':'140201', 'Descripcion':'Papelería', 'Familia':'1402'})
-   M.Clase.objects.create(**{'Codigo':'140202', 'Descripcion':'Lentes y proyectores', 'Familia':'1402'})
-
-   M.Clase.objects.create(**{'Codigo':'180101', 'Descripcion':'Consultoría financiera', 'Familia':'1801'})
-   M.Clase.objects.create(**{'Codigo':'180102', 'Descripcion':'Consultoría en recursos humanos', 'Familia':'1801'})
-
-   M.Clase.objects.create(**{'Codigo':'180201', 'Descripcion':'Asesoría legal corporativa', 'Familia':'1802'})
-   M.Clase.objects.create(**{'Codigo':'180202', 'Descripcion':'Litigios y demandas', 'Familia':'1802'})
 
    payload = req.data['payload']
    payload = {'Descripcion':payload}
