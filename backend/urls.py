@@ -25,11 +25,10 @@ class ProductoView(viewsets.ViewSet):
    return Response(selectRecords)
   if req.data['mode'] == 'create':
    if 'updt_producto_codigo' in req.data['payload']:
-    if 'codeChanged' in req.data['payload'].keys() and req.data['payload']['codeChanged']:
-     codeToLook = req.data['payload']['Codigo']
-     foundRecord = list(M.Producto.objects.filter(Codigo=codeToLook))
-     if foundRecord:return Response({'msg':'El código %s esta siendo usado por el producto: %s'%(codeToLook,foundRecord[0].Descripcion)})
-
+    # if 'codeChanged' in req.data['payload'].keys() and req.data['payload']['codeChanged']:
+    #  codeToLook = req.data['payload']['Codigo']
+    #  foundRecord = list(M.Producto.objects.filter(Codigo=codeToLook))
+    #  if foundRecord:return Response({'msg':'El código %s esta siendo usado por el producto: %s'%(codeToLook,foundRecord[0].Descripcion)})
     recordToUpdt = M.Producto.objects.filter(Codigo=req.data['payload']['updt_producto_codigo'])
     dictRepr = {}
     for propToUpdt in req.data['payload'].keys():
@@ -72,6 +71,7 @@ class ProductoView(viewsets.ViewSet):
      return Response({'seq':newSeq})
    return Response([])
   if req.data['mode'] == 'reqCodeAllSeqData':  
+  #  deprec
    seqToSearch = M.Clase.objects.filter(pk=req.data['payload']).values('Codigo')
    if seqToSearch: 
     seqToSearch = seqToSearch[0]['Codigo']
@@ -137,6 +137,60 @@ class CategoriaView(viewsets.ViewSet):
  def create(self,req):  
 
   if req.data['mode'] == 'create':
+   
+   M.Segmento.objects.create(**{'Codigo':'10', 'Descripcion':'Productos agrícolas, alimentos y bebidas'})
+   M.Segmento.objects.create(**{'Codigo':'11', 'Descripcion':'Productos textiles, prendas de vestir y accesorios'})
+   M.Segmento.objects.create(**{'Codigo':'12', 'Descripcion':'Productos y servicios químicos'})
+   M.Segmento.objects.create(**{'Codigo':'14', 'Descripcion':'Equipos de oficina, papelería y material escolar'})
+   M.Segmento.objects.create(**{'Codigo':'18', 'Descripcion':'Servicios profesionales'})
+
+
+   M.Familia.objects.create(**{'Codigo':'1001', 'Descripcion':'Frutas y verduras', 'Segmento':'10'})
+   M.Familia.objects.create(**{'Codigo':'1002', 'Descripcion':'Bebidas no alcohólicas', 'Segmento':'10'})
+
+   M.Familia.objects.create(**{'Codigo':'1101', 'Descripcion':'Ropa masculina', 'Segmento':'11'})
+   M.Familia.objects.create(**{'Codigo':'1102', 'Descripcion':'Accesorios de moda', 'Segmento':'11'})
+
+   M.Familia.objects.create(**{'Codigo':'1201', 'Descripcion':'Productos de limpieza', 'Segmento':'12'})
+   M.Familia.objects.create(**{'Codigo':'1202', 'Descripcion':'Productos farmacéuticos', 'Segmento':'12'})
+
+   M.Familia.objects.create(**{'Codigo':'1401', 'Descripcion':'Mobiliario de oficina', 'Segmento':'14'})
+   M.Familia.objects.create(**{'Codigo':'1402', 'Descripcion':'Material de oficina', 'Segmento':'14'})
+
+   M.Familia.objects.create(**{'Codigo':'1801', 'Descripcion':'Consultoría empresarial', 'Segmento':'18'})
+   M.Familia.objects.create(**{'Codigo':'1802', 'Descripcion':'Servicios legales', 'Segmento':'18'})
+
+
+   M.Clase.objects.create(**{'Codigo':'100101', 'Descripcion':'Frutas frescas', 'Familia':'1001'})
+   M.Clase.objects.create(**{'Codigo':'100102', 'Descripcion':'Verduras frescas', 'Familia':'1001'})
+
+   M.Clase.objects.create(**{'Codigo':'100201', 'Descripcion':'Jugos naturales', 'Familia':'1002'})
+   M.Clase.objects.create(**{'Codigo':'100202', 'Descripcion':'Agua embotellada', 'Familia':'1002'})
+
+   M.Clase.objects.create(**{'Codigo':'110101', 'Descripcion':'Camisas', 'Familia':'1101'})
+   M.Clase.objects.create(**{'Codigo':'110102', 'Descripcion':'Pantalones', 'Familia':'1101'})
+
+   M.Clase.objects.create(**{'Codigo':'110201', 'Descripcion':'Bolsos y carteras', 'Familia':'1102'})
+   M.Clase.objects.create(**{'Codigo':'110202', 'Descripcion':'Gafas de sol', 'Familia':'1102'})
+
+   M.Clase.objects.create(**{'Codigo':'120101', 'Descripcion':'Detergentes', 'Familia':'1201'})
+   M.Clase.objects.create(**{'Codigo':'120102', 'Descripcion':'Limpiadores multiusos', 'Familia':'1201'})
+
+   M.Clase.objects.create(**{'Codigo':'120201', 'Descripcion':'Medicamentos para el dolor', 'Familia':'1202'})
+   M.Clase.objects.create(**{'Codigo':'120202', 'Descripcion':'Vitaminas y suplementos', 'Familia':'1202'})
+
+   M.Clase.objects.create(**{'Codigo':'140101', 'Descripcion':'Escritorios', 'Familia':'1401'})
+   M.Clase.objects.create(**{'Codigo':'140102', 'Descripcion':'Sillas de oficina', 'Familia':'1401'})
+
+   M.Clase.objects.create(**{'Codigo':'140201', 'Descripcion':'Papelería', 'Familia':'1402'})
+   M.Clase.objects.create(**{'Codigo':'140202', 'Descripcion':'Lentes y proyectores', 'Familia':'1402'})
+
+   M.Clase.objects.create(**{'Codigo':'180101', 'Descripcion':'Consultoría financiera', 'Familia':'1801'})
+   M.Clase.objects.create(**{'Codigo':'180102', 'Descripcion':'Consultoría en recursos humanos', 'Familia':'1801'})
+
+   M.Clase.objects.create(**{'Codigo':'180201', 'Descripcion':'Asesoría legal corporativa', 'Familia':'1802'})
+   M.Clase.objects.create(**{'Codigo':'180202', 'Descripcion':'Litigios y demandas', 'Familia':'1802'})
+
    payload = req.data['payload']
    payload = {'Descripcion':payload}
    createdObj = M.Categoria.objects.create(**payload)
@@ -271,23 +325,30 @@ class ProveedorView(viewsets.ViewSet):
 class FamiliaView(viewsets.ViewSet):
  
  def list(self,req):
-  records = M.Familia.objects.values('ID','Descripcion')
+  records = M.Familia.objects.all().values('ID','Descripcion')
   return Response(records)
 
  def create(self,req):
+  if req.data['mode'] == 'listFilteredRecords':
+   if req.data['payload']:
+    segmentoRecord = M.Segmento.objects.filter(pk=req.data['payload']).values('Codigo')
+    if segmentoRecord:
+     segmentoRecord = segmentoRecord[0]
+     familiaRecords = M.Familia.objects.filter(Segmento=segmentoRecord['Codigo']).values('ID','Descripcion')
+     return Response(familiaRecords)  
   if req.data['mode'] == 'reqCodeAllSeqData':  
    data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
    familiaCodigo = M.Familia.objects.filter(pk=req.data['payload']).values('Codigo')
    if familiaCodigo:
     familiaCodigo = familiaCodigo[0]['Codigo']
-    familiaSegmentos = M.Segmento.objects.filter(Familia=familiaCodigo).values('Codigo')
-    for segmentoCode in familiaSegmentos:
-     segmentoCode = segmentoCode['Codigo']
-     clasesCodigo = M.Clase.objects.filter(Segmento=segmentoCode).values('Codigo')
-     for seqToLook in clasesCodigo:
-      claseRecords = M.Producto.objects.filter(Codigo__contains=seqToLook['Codigo']).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
+    # familiaSegmentos = M.Segmento.objects.filter(Familia=familiaCodigo).values('Codigo')
+    # for segmentoCode in familiaSegmentos:
+    #  segmentoCode = segmentoCode['Codigo']
+    clasesCodigo = M.Clase.objects.filter(Familia=familiaCodigo).values('Codigo')
+    for seqToLook in clasesCodigo:
+      productoRecords = M.Producto.objects.filter(Codigo__contains=seqToLook['Codigo']).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
      
-      for record in claseRecords.values():
+      for record in productoRecords.values():
         parsedRecord = {**record}
         del parsedRecord['ID']
         del parsedRecord['FichaTecnica']
@@ -305,31 +366,27 @@ class FamiliaView(viewsets.ViewSet):
         data['records'].append(list(parsedRecord.values()))
    return Response(data) 
   return Response([])
+ 
 class SegmentoView(viewsets.ViewSet):
  
  def list(self,req):
-  # to get all records without filter
   records = M.Segmento.objects.all().values('ID','Descripcion')
   return Response(records)   
 
  def create(self,req):
-  if req.data['mode'] == 'listFilteredRecords':
-   if req.data['payload']:
-    familiaRecord = M.Familia.objects.filter(pk=req.data['payload']).values('Codigo')
-    if familiaRecord:
-     familiaRecord = familiaRecord[0]
-     segmentoRecords = M.Segmento.objects.filter(Familia=familiaRecord['Codigo']).values('ID','Descripcion')
-     return Response(segmentoRecords)
   if req.data['mode'] == 'reqCodeAllSeqData':  
    data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
    segmentoCode = M.Segmento.objects.filter(pk=req.data['payload']).values('Codigo')
    if segmentoCode:
     segmentoCode = segmentoCode[0]['Codigo']
-    clasesCodigo = M.Clase.objects.filter(Segmento=segmentoCode).values('Codigo')
-    for seqToLook in clasesCodigo:
-     claseRecords = M.Producto.objects.filter(Codigo__contains=seqToLook['Codigo']).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
+    segmentoFamilias = M.Familia.objects.filter(Segmento=segmentoCode).values('Codigo')
+    for familiasCode in segmentoFamilias:
+     familiaCode = familiasCode['Codigo']    
+     clasesCodigo = M.Clase.objects.filter(Familia=familiaCode).values('Codigo')
+     for seqToLook in clasesCodigo:
+      productoRecords = M.Producto.objects.filter(Codigo__contains=seqToLook['Codigo']).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
      
-     for record in claseRecords.values():
+      for record in productoRecords.values():
         parsedRecord = {**record}
         del parsedRecord['ID']
         del parsedRecord['FichaTecnica']
@@ -351,28 +408,26 @@ class SegmentoView(viewsets.ViewSet):
 class ClaseView(viewsets.ViewSet):
  
  def list(self,req):
-  # to get all records without filter
   records = M.Clase.objects.all().values('ID','Descripcion')
   return Response(records) 
 
  def create(self,req):
   if req.data['mode'] == 'listFilteredRecords':
    if req.data['payload']:
-    segmentoRecord = M.Segmento.objects.filter(pk=req.data['payload']).values('Codigo','Familia')
-    if segmentoRecord:
-     segmentoRecord = segmentoRecord[0]
-     claseRecords = M.Clase.objects.filter(Segmento=segmentoRecord['Codigo']).values('ID','Descripcion')
+    familiaRecord = M.Familia.objects.filter(pk=req.data['payload']).values('Codigo')
+    if familiaRecord:
+     familiaRecord = familiaRecord[0]
+     claseRecords = M.Clase.objects.filter(Familia=familiaRecord['Codigo']).values('ID','Descripcion')
      return Response(claseRecords)
-    
   if req.data['mode'] == 'reqCodeAllSeqData':  
    data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
    clasesCodigo = M.Clase.objects.filter(pk=req.data['payload']).values('Codigo')
    print('---------------->',clasesCodigo)
    if clasesCodigo:
      clasesCodigo = clasesCodigo[0]['Codigo']
-     claseRecords = M.Producto.objects.filter(Codigo__contains=clasesCodigo).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
+     productoRecords = M.Producto.objects.filter(Codigo__contains=clasesCodigo).values('Codigo','Descripcion','UnidadMedida','Categoria','EstadoMaterial','Minimo','Maximo','PuntoReorden','Proveedor','TiempoEntrega','PedidoEstandar','LoteMinimo','LoteMaximo','TiempoProcesoInterno','TiempoVidaUtil')
      
-     for record in claseRecords.values():
+     for record in productoRecords.values():
         parsedRecord = {**record}
         del parsedRecord['ID']
         del parsedRecord['FichaTecnica']

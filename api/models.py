@@ -84,31 +84,31 @@ class Proveedor(models.Model):
     class Meta:
         managed = True
         db_table = 'Proveedor'    
-
-class Familia(models.Model):
-    ID = models.AutoField(primary_key=True)
-    Codigo = models.IntegerField(db_column='Codigo', blank=True, null=True)
-    Descripcion = models.CharField(db_column='Descripcion', max_length=100, blank=True, null=True)
-    
-    class Meta:
-        managed = True
-        db_table = 'Familia'    
-
+   
 class Segmento(models.Model):
     ID = models.AutoField(primary_key=True)
     Codigo = models.IntegerField(db_column='Codigo', blank=True, null=True)
     Descripcion = models.CharField(db_column='Descripcion', max_length=100, blank=True, null=True)
-    Familia = models.IntegerField(db_column='Familia', blank=True, null=True)
     
     class Meta:
         managed = True
         db_table = 'Segmento'        
 
-class Clase(models.Model):
+class Familia(models.Model):
     ID = models.AutoField(primary_key=True)
     Codigo = models.IntegerField(db_column='Codigo', blank=True, null=True)
     Descripcion = models.CharField(db_column='Descripcion', max_length=100, blank=True, null=True)
     Segmento = models.IntegerField(db_column='Segmento', blank=True, null=True)    
+    
+    class Meta:
+        managed = True
+        db_table = 'Familia' 
+
+class Clase(models.Model):
+    ID = models.AutoField(primary_key=True)
+    Codigo = models.IntegerField(db_column='Codigo', blank=True, null=True)
+    Descripcion = models.CharField(db_column='Descripcion', max_length=100, blank=True, null=True)
+    Familia = models.IntegerField(db_column='Familia', blank=True, null=True)    
 
     class Meta:
         managed = True
