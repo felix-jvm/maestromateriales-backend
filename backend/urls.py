@@ -76,7 +76,7 @@ class ProductoView(viewsets.ViewSet):
    host = 'localhost'
    dbname = 'maestromateriales'
    user = 'postgres'
-   password = 'seguridad2023.'
+   password = 'seguridad2023'
    conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password)
    query = 'SELECT "Codigo","Descripcion","UnidadMedida","Categoria","EstadoMaterial","Minimo","Maximo","PuntoReorden","Proveedor","TiempoEntrega","PedidoEstandar","LoteMinimo","LoteMaximo","TiempoProcesoInterno","TiempoVidaUtil" FROM "Producto"'
    df = pd.read_sql(query, conn)   
