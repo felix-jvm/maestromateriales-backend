@@ -7,6 +7,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 import api.models as M
+import pandas as pd
+import psycopg2
 import bcrypt
 import json
 
@@ -70,6 +72,17 @@ class ProductoView(viewsets.ViewSet):
       newSeq = str(seqToSearch) + '01'
      return Response({'seq':newSeq})
    return Response([])
+  if req.data['mode'] == 'generateProductRecords':
+   host = 'localhost'
+   dbname = 'maestromateriales'
+   user = 'postgres'
+   password = 'seguridad2023.'
+   conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password)
+   query = 'SELECT "Codigo","Descripcion","UnidadMedida","Categoria","EstadoMaterial","Minimo","Maximo","PuntoReorden","Proveedor","TiempoEntrega","PedidoEstandar","LoteMinimo","LoteMaximo","TiempoProcesoInterno","TiempoVidaUtil" FROM "Producto"'
+   df = pd.read_sql(query, conn)   
+   df.to_excel('lista_productos.xlsx', index=False, engine='openpyxl')
+   conn.close()
+   return Response({'msg':'ok'})
   if req.data['mode'] == 'reqCodeAllSeqData':  
   #  deprec
    seqToSearch = M.Clase.objects.filter(pk=req.data['payload']).values('Codigo')
