@@ -11,6 +11,7 @@ import pandas as pd
 import psycopg2
 import bcrypt
 import json
+import os
 
 class ProductoView(viewsets.ViewSet):
  
@@ -82,7 +83,12 @@ class ProductoView(viewsets.ViewSet):
    df = pd.read_sql(query, conn)   
    df.to_excel('lista_productos.xlsx', index=False, engine='openpyxl')
    conn.close()
-   return Response({'msg':'ok'})
+   if os.path.exists('lista_productos.xlsx'):
+    with open('lista_productos.xlsx', 'rb') as file:
+            response = HttpResponse(file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="lista_productos.xlsx"'
+            return response
+   return Response({'msg':'False'})
   if req.data['mode'] == 'reqCodeAllSeqData':  
   #  deprec
    seqToSearch = M.Clase.objects.filter(pk=req.data['payload']).values('Codigo')
