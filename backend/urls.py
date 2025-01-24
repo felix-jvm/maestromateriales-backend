@@ -79,7 +79,17 @@ class ProductoView(viewsets.ViewSet):
    user = 'postgres'
    password = 'seguridad2023'
    conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password)
-   query = 'SELECT "Codigo","Descripcion","UnidadMedida","Categoria","EstadoMaterial","Minimo","Maximo","PuntoReorden","Proveedor","TiempoEntrega","PedidoEstandar","LoteMinimo","LoteMaximo","TiempoProcesoInterno","TiempoVidaUtil" FROM "Producto"'
+  #  query = 'WITH UM AS (SELECT "ID","Descripcion" FROM "UnidadMedida") SELECT "Codigo","Descripcion",UM.Descripcion,"Categoria","EstadoMaterial","Minimo","Maximo","PuntoReorden","Proveedor","TiempoEntrega","PedidoEstandar","LoteMinimo","LoteMaximo","TiempoProcesoInterno","TiempoVidaUtil" FROM "Producto"'
+   query = 'WITH "UM" AS (SELECT "ID","Descripcion" FROM "UnidadMedida"),' \
+   '"CAT" AS (SELECT "ID","Descripcion" FROM "Categoria"),' \
+   '"EST" AS (SELECT "ID","Descripcion" FROM "EstadoMaterial")' \
+   ',"PROV" AS (SELECT "ID","Descripcion" FROM "Proveedor")'\
+   'SELECT "Codigo","Descripcion",(SELECT "Descripcion" FROM "UM" WHERE "ID"="UnidadMedida") AS "UnidadMedida",' \
+   '(SELECT "Descripcion" FROM "CAT" WHERE "ID"="Categoria") AS "Categoria",' \
+   '(SELECT "Descripcion" FROM "EST" WHERE "ID"="EstadoMaterial") AS "EstadoMaterial",' \
+   '"Minimo","Maximo","PuntoReorden",' \
+   '(SELECT "Descripcion" FROM "PROV" WHERE "ID"="Proveedor") AS "Proveedor",' \
+   '"TiempoEntrega","PedidoEstandar","LoteMinimo","LoteMaximo","TiempoProcesoInterno","TiempoVidaUtil" FROM "Producto"'
    df = pd.read_sql(query, conn)   
    df.to_excel('lista_productos.xlsx', index=False, engine='openpyxl')
    conn.close()
