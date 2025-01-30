@@ -316,7 +316,7 @@ class FamiliaView(viewsets.ViewSet):
     segmentoRecord = M.Segmento.objects.filter(pk=req.data['payload']).values('Codigo')
     if segmentoRecord:
      segmentoRecord = segmentoRecord[0]
-     familiaRecords = M.Familia.objects.filter(Segmento=segmentoRecord['Codigo']).values('ID','Descripcion')
+     familiaRecords = M.Familia.objects.filter(Segmento=segmentoRecord['Codigo']).values('ID','Descripcion','Codigo')
      return Response(familiaRecords)  
   if req.data['mode'] == 'reqCodeAllSeqData':  
    data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
@@ -352,7 +352,7 @@ class FamiliaView(viewsets.ViewSet):
 class SegmentoView(viewsets.ViewSet):
  
  def list(self,req):
-  records = M.Segmento.objects.all().values('ID','Descripcion')
+  records = M.Segmento.objects.all().values('ID','Descripcion','Codigo')
   return Response(records)   
 
  def create(self,req):
@@ -399,7 +399,7 @@ class ClaseView(viewsets.ViewSet):
     familiaRecord = M.Familia.objects.filter(pk=req.data['payload']).values('Codigo')
     if familiaRecord:
      familiaRecord = familiaRecord[0]
-     claseRecords = M.Clase.objects.filter(Familia=familiaRecord['Codigo']).values('ID','Descripcion')
+     claseRecords = M.Clase.objects.filter(Familia=familiaRecord['Codigo']).values('ID','Descripcion','Codigo')
      return Response(claseRecords)
   if req.data['mode'] == 'reqCodeAllSeqData':  
    data = {'columns':[{'title':'Codigo'},{'title':'Descripcion'},{'title':'UnidadMedida'},{'title':'Categoria'},{'title':'EstadoMaterial'},{'title':'Minimo'},{'title':'Maximo'},{'title':'PuntoReorden'},{'title':'Proveedor'},{'title':'TiempoEntrega'},{'title':'PedidoEstandar'},{'title':'LoteMinimo'},{'title':'LoteMaximo'},{'title':'TiempoProcesoInterno'},{'title':'TiempoVidaUtil'}],'records':[]}
