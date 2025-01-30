@@ -2,6 +2,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.response import Response
 from django.conf.urls.static import static
 from django.http import HttpResponse
+from django.http import FileResponse
 from rest_framework import viewsets
 from django.conf import settings
 from django.contrib import admin
@@ -10,6 +11,7 @@ import api.models as M
 import pandas as pd
 import psycopg2
 import bcrypt
+import magic
 import json
 import os
 
@@ -56,7 +58,11 @@ class ProductoView(viewsets.ViewSet):
   if req.data['mode'] == 'request_ficha_tecnica':
    productCodigo = req.data['productCode'].split('_')[1].replace(' ','').strip()
    procedRecord = list(M.Producto.objects.filter(Codigo=productCodigo))
-   if procedRecord:return HttpResponse(procedRecord[0].FichaTecnica,content_type='image/png')
+   if procedRecord:
+     file = bytes(procedRecord[0].FichaTecnica)
+     mime = magic.Magic(mime=True)
+     tipo_mime = mime.from_buffer(file)    
+     return HttpResponse(file,content_type=tipo_mime)
    return Response([]) 
   if req.data['mode'] == 'reqSeqCode':
    if req.data['payload']:
