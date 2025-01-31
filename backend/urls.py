@@ -307,8 +307,10 @@ class ProveedorView(viewsets.ViewSet):
 class FamiliaView(viewsets.ViewSet):
  
  def list(self,req):
-  records = M.Familia.objects.all().values('ID','Descripcion')
-  return Response(records)
+  data = {'columns':[{'title':'Descripción'}],'records':[]}
+  recordList = M.Familia.objects.all().values('Descripcion')
+  for record in recordList:data['records'].append(list(record.values()))   
+  return Response(data)
 
  def create(self,req):
   if req.data['mode'] == 'listFilteredRecords':
@@ -347,13 +349,41 @@ class FamiliaView(viewsets.ViewSet):
         parsedRecord['Proveedor'] = proveedor[0]['Descripcion'] if proveedor else ''
         data['records'].append(list(parsedRecord.values()))
    return Response(data) 
+  if req.data['mode'] == 'reqTableSeqRecords':  
+   records = M.Familia.objects.all().values('ID','Descripcion','Codigo')
+   return Response(records)   
+  if req.data['mode'] == 'create':
+   payload = req.data['payload']  
+   familiaCodigo = M.Segmento.objects.filter(Codigo=payload['segmento']).values('Codigo')
+   familiaCodigo = str(familiaCodigo[0]['Codigo'])+payload['codigo'][-2:]
+   payload = {'Descripcion':payload['descripcion'], 'Codigo':familiaCodigo, 'Segmento':payload['segmento']}
+   createdObj = M.Familia.objects.create(**payload)
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
+  if req.data['mode'] == 'fillForm':    
+   specificRecord = M.Familia.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
+   if specificRecord:return Response(specificRecord.values('ID','Codigo','Descripcion','Segmento'))
+  if req.data['mode'] == 'update':    
+   payload = req.data['payload']
+   familiaCodigo = M.Segmento.objects.filter(Codigo=payload['segmento']).values('Codigo')
+   familiaCodigo = str(familiaCodigo[0]['Codigo'])+payload['codigo'][-2:]    
+   M.Familia.objects.filter(Descripcion=req.data['recordCode'].replace('updt_','').strip()).update(**{
+    'Codigo':familiaCodigo, 
+    'Descripcion':payload['descripcion'], 
+    'Segmento':payload['segmento']})
+   return Response({'msg':'ok'})   
+  # if req.data['mode'] == 'delete':
+  #  recordToDeleteCode = req.data['code'].replace(' ','').strip()
+  #  record = M.Segmento.objects.filter(Descripcion=recordToDeleteCode)
+  #  if record:record[0].delete()
   return Response([])
  
 class SegmentoView(viewsets.ViewSet):
  
  def list(self,req):
-  records = M.Segmento.objects.all().values('ID','Descripcion','Codigo')
-  return Response(records)   
+  data = {'columns':[{'title':'Descripción'}],'records':[]}
+  recordList = M.Segmento.objects.all().values('Descripcion')
+  for record in recordList:data['records'].append(list(record.values()))   
+  return Response(data)   
 
  def create(self,req):
   if req.data['mode'] == 'reqCodeAllSeqData':  
@@ -385,13 +415,34 @@ class SegmentoView(viewsets.ViewSet):
         parsedRecord['Proveedor'] = proveedor[0]['Descripcion'] if proveedor else ''
         data['records'].append(list(parsedRecord.values()))
    return Response(data)
+  if req.data['mode'] == 'reqTableSeqRecords':  
+   records = M.Segmento.objects.all().values('ID','Codigo','Descripcion')
+   return Response(records)  
+  if req.data['mode'] == 'create':
+   payload = req.data['payload']
+   payload = {'Descripcion':payload['descripcion'], 'Codigo':payload['codigo']}
+   createdObj = M.Segmento.objects.create(**payload)
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
+  if req.data['mode'] == 'fillForm':  
+   specificRecord = M.Segmento.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
+   if specificRecord:return Response(specificRecord.values('ID','Codigo','Descripcion'))
+  if req.data['mode'] == 'update':
+   payload = req.data['payload']
+   M.Segmento.objects.filter(Descripcion=req.data['recordCode'].replace('updt_','').strip()).update(**{'Codigo':payload['codigo'], 'Descripcion':payload['descripcion']})
+   return Response({'msg':'ok'})   
+  # if req.data['mode'] == 'delete':
+  #  recordToDeleteCode = req.data['code'].replace(' ','').strip()
+  #  record = M.Segmento.objects.filter(Descripcion=recordToDeleteCode)
+  #  if record:record[0].delete()  
   return Response({})
   
 class ClaseView(viewsets.ViewSet):
  
  def list(self,req):
-  records = M.Clase.objects.all().values('ID','Descripcion')
-  return Response(records) 
+  data = {'columns':[{'title':'Descripción'}],'records':[]}
+  recordList = M.Clase.objects.all().values('Descripcion')
+  for record in recordList:data['records'].append(list(record.values()))   
+  return Response(data) 
 
  def create(self,req):
   if req.data['mode'] == 'listFilteredRecords':
@@ -426,6 +477,32 @@ class ClaseView(viewsets.ViewSet):
         parsedRecord['Proveedor'] = proveedor[0]['Descripcion'] if proveedor else ''
         data['records'].append(list(parsedRecord.values()))
    return Response(data)
+  if req.data['mode'] == 'reqTableSeqRecords':  
+   records = M.Clase.objects.all().values('ID','Descripcion','Familia')
+   return Response(records)  
+  if req.data['mode'] == 'create':
+   payload = req.data['payload']  
+   familiaCodigo = M.Familia.objects.filter(Codigo=payload['familia']).values('Codigo')
+   familiaCodigo = str(familiaCodigo[0]['Codigo'])+payload['codigo'][-2:]
+   payload = {'Descripcion':payload['descripcion'], 'Codigo':familiaCodigo, 'Familia':payload['familia']}
+   createdObj = M.Clase.objects.create(**payload)
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
+  if req.data['mode'] == 'fillForm':    
+   specificRecord = M.Clase.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
+   if specificRecord:return Response(specificRecord.values('ID','Codigo','Descripcion','Familia'))
+  if req.data['mode'] == 'update':    
+   payload = req.data['payload']
+   familiaCodigo = M.Familia.objects.filter(Codigo=payload['familia']).values('Codigo')  
+   familiaCodigo = str(familiaCodigo[0]['Codigo'])+payload['codigo'][-2:]   
+   M.Clase.objects.filter(Descripcion=req.data['recordCode'].replace('updt_','').strip()).update(**{
+    'Codigo':familiaCodigo, 
+    'Descripcion':payload['descripcion'], 
+    'Familia':payload['familia']})
+   return Response({'msg':'ok'})   
+  # if req.data['mode'] == 'delete':
+  #  recordToDeleteCode = req.data['code'].replace(' ','').strip()
+  #  record = M.Segmento.objects.filter(Descripcion=recordToDeleteCode)
+  #  if record:record[0].delete()  
   return Response({})  
 
 
