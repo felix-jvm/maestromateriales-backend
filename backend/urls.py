@@ -64,6 +64,7 @@ class ProductoView(viewsets.ViewSet):
      tipo_mime = mime.from_buffer(file)    
      return HttpResponse(file,content_type=tipo_mime)
    return Response([]) 
+  print('-------------------------------->',req.data)
   if req.data['mode'] == 'reqSeqCode':
    if req.data['payload']:
     seqToSearch = M.Clase.objects.filter(pk=req.data['payload']).values('Codigo')
@@ -358,7 +359,7 @@ class FamiliaView(viewsets.ViewSet):
    familiaCodigo = str(familiaCodigo[0]['Codigo'])+payload['codigo'][-2:]
    payload = {'Descripcion':payload['descripcion'], 'Codigo':familiaCodigo, 'Segmento':payload['segmento']}
    createdObj = M.Familia.objects.create(**payload)
-   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion,'Codigo':createdObj.Codigo})
   if req.data['mode'] == 'fillForm':    
    specificRecord = M.Familia.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
    if specificRecord:return Response(specificRecord.values('ID','Codigo','Descripcion','Segmento'))
@@ -420,9 +421,10 @@ class SegmentoView(viewsets.ViewSet):
    return Response(records)  
   if req.data['mode'] == 'create':
    payload = req.data['payload']
+   print('-------------------------------->',payload)
    payload = {'Descripcion':payload['descripcion'], 'Codigo':payload['codigo']}
    createdObj = M.Segmento.objects.create(**payload)
-   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion,'Codigo':createdObj.Codigo})
   if req.data['mode'] == 'fillForm':  
    specificRecord = M.Segmento.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
    if specificRecord:return Response(specificRecord.values('ID','Codigo','Descripcion'))
@@ -486,7 +488,7 @@ class ClaseView(viewsets.ViewSet):
    familiaCodigo = str(familiaCodigo[0]['Codigo'])+payload['codigo'][-2:]
    payload = {'Descripcion':payload['descripcion'], 'Codigo':familiaCodigo, 'Familia':payload['familia']}
    createdObj = M.Clase.objects.create(**payload)
-   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion})
+   return Response({'msg':'ok','ID':createdObj.pk,'Descripcion':createdObj.Descripcion,'Codigo':createdObj.Codigo})
   if req.data['mode'] == 'fillForm':    
    specificRecord = M.Clase.objects.filter(Descripcion=req.data['code'].replace('updt_','').strip())
    if specificRecord:return Response(specificRecord.values('ID','Codigo','Descripcion','Familia'))
