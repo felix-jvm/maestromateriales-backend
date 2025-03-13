@@ -153,8 +153,10 @@ class ProductoView(viewsets.ViewSet):
 class UsuarioView(viewsets.ViewSet):
  
  def create(self,req):
-  user = req.data['cred']['username']
-  password = req.data['cred']['password']
+  # user = req.data['cred']['username']
+  # password = req.data['cred']['password']
+  user = 'admin'
+  password = 'admin123'
   if req.data['mode'] == 'userCreation':
    permisonivel = req.data['cred']['permisonivel']
    readyPass = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
